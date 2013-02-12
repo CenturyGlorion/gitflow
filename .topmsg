@@ -1,0 +1,6 @@
+From: Jiang Youxin <jiangyouxin@360.cn>
+Subject: [PATCH] t/squash
+
+Discard history on feature/release/hotfix when finished.
+
+Signed-off-by: Jiang Youxin <jiangyouxin@360.cn>
