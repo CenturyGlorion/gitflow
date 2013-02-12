@@ -231,6 +231,7 @@ cmd_finish() {
 	DEFINE_boolean fetch false "fetch from $ORIGIN before performing finish" F
 	DEFINE_boolean rebase false "rebase instead of merge" r
 	DEFINE_boolean keep false "keep branch after performing finish" k
+	DEFINE_boolean discard false "Discard history on branch" D
 	parse_args "$@"
 	expand_nameprefix_arg
 
@@ -310,7 +311,14 @@ cmd_finish() {
 	if [ "$(git rev-list -n2 "$DEVELOP_BRANCH..$BRANCH" | wc -l)" -eq 1 ]; then
 		git merge --ff "$BRANCH"
 	else
-		git merge --no-ff "$BRANCH"
+		if flag discard; then
+			git merge --squash "$BRANCH"
+			if [ $? -eq 0 ]; then
+				git commit || die #TODO
+			fi
+		else
+			git merge --no-ff "$BRANCH"
+		fi
 	fi
 
 	if [ $? -ne 0 ]; then
@@ -345,7 +353,11 @@ helper_finish_cleanup() {
 	
 	
 	if noflag keep; then
-		git branch -d "$BRANCH"
+		if flag discard; then
+			git branch -D "$BRANCH"
+		else
+			git branch -d "$BRANCH"
+		fi
 	fi
 
 	echo
