@@ -26,6 +26,7 @@
 # those of the authors and should not be interpreted as representing official
 # policies, either expressed or implied, of Vincent Driessen.
 #
+
 prefix=/usr/local
 
 # files that need mode 755
@@ -46,7 +47,7 @@ all:
 	@echo "       make uninstall"
 
 install:
-	cp -f shFlags/src/shflags gitflow-shFlags
+	cp -r shFlags/src/shflags gitflow-shFlags
 	install -d -m 0755 $(prefix)/bin
 	install -m 0755 $(EXEC_FILES) $(prefix)/bin
 	install -m 0644 $(SCRIPT_FILES) $(prefix)/bin
