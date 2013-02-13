@@ -1,0 +1,6 @@
+From: Jiang Youxin <jiangyouxin@360.cn>
+Subject: [PATCH] t/install_on_cygwin
+
+For install on cygwin.
+
+Signed-off-by: Jiang Youxin <jiangyouxin@360.cn>

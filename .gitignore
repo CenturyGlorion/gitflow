@@ -1,3 +1,4 @@
+gitflow-shFlags
 debian/files
 debian/*.substvars
 debian/*.debhelper.log
