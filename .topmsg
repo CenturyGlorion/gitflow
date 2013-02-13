@@ -1,6 +1,6 @@
 From: Jiang Youxin <jiangyouxin@360.cn>
-Subject: [PATCH] t/squash
+Subject: [PATCH] t/360
 
-Discard history on feature/release/hotfix when finished.
+for use in 360
 
 Signed-off-by: Jiang Youxin <jiangyouxin@360.cn>
