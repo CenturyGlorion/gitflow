@@ -296,10 +296,9 @@ cmd_finish() {
 	# try to merge into develop
 	# in case a previous attempt to finish this release branch has failed,
 	# but the merge into develop was successful, we skip it now
+	git_do checkout "$DEVELOP_BRANCH" || \
+	  die "Could not check out $DEVELOP_BRANCH."
 	if ! git_is_branch_merged_into "$BRANCH" "$DEVELOP_BRANCH"; then
-		git_do checkout "$DEVELOP_BRANCH" || \
-		  die "Could not check out $DEVELOP_BRANCH."
-
 		git_do merge "$BRANCH" || \
 		  die "There were merge conflicts."
 		  # TODO: What do we do now?
