@@ -1,3 +1,8 @@
+<<<<<<< HEAD
+=======
+#
+# Copyright 2010 Vincent Driessen. All rights reserved.
+>>>>>>> t/install_on_cygwin
 # 
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
@@ -45,7 +50,7 @@ all:
 	@echo "       make uninstall"
 
 install:
-	cp -f shFlags/src/shflags gitflow-shFlags
+	cp -r shFlags/src/shflags gitflow-shFlags
 	install -d -m 0755 $(prefix)/bin
 	install -m 0755 $(EXEC_FILES) $(prefix)/bin
 	install -m 0644 $(SCRIPT_FILES) $(prefix)/bin
