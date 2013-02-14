@@ -1,8 +1,5 @@
-<<<<<<< HEAD
-=======
 #
 # Copyright 2010 Vincent Driessen. All rights reserved.
->>>>>>> t/install_on_cygwin
 # 
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
