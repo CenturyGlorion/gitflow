@@ -196,7 +196,6 @@ cmd_finish() {
 	DEFINE_boolean push false "push to $ORIGIN after performing finish" p
 	DEFINE_boolean keep false "keep branch after performing finish" k
 	DEFINE_boolean notag false "don't tag this release" n
-	DEFINE_boolean squash false "squash release during merge" S
 
 	parse_args "$@"
 	require_version_arg
@@ -222,24 +221,11 @@ cmd_finish() {
 		require_branches_equal "$DEVELOP_BRANCH" "$ORIGIN/$DEVELOP_BRANCH"
 	fi
 
-	# try to merge into master
-	# in case a previous attempt to finish this release branch has failed,
-	# but the merge into master was successful, we skip it now
-	if ! git_is_branch_merged_into "$BRANCH" "$MASTER_BRANCH"; then
+	if noflag notag; then
 		git_do checkout "$MASTER_BRANCH" || \
 		  die "Could not check out $MASTER_BRANCH."
-		if noflag squash; then
-			git_do merge --no-ff "$BRANCH" || \
-				die "There were merge conflicts."
-				# TODO: What do we do now?
-		else
-			git_do merge --squash "$BRANCH" || \
-				die "There were merge conflicts."
-			git_do commit
-		fi
-	fi
-
-	if noflag notag; then
+		git_do merge --ff-only "$BRANCH" || \
+		  die "Could not merge $BRANCH using ff-only on $MASTER_BRANCH"
 		# try to tag the release
 		# in case a previous attempt to finish this release branch has failed,
 		# but the tag was set successful, we skip it now
@@ -261,19 +247,9 @@ cmd_finish() {
 	if ! git_is_branch_merged_into "$BRANCH" "$DEVELOP_BRANCH"; then
 		git_do checkout "$DEVELOP_BRANCH" || \
 		  die "Could not check out $DEVELOP_BRANCH."
-
-		# TODO: Actually, accounting for 'git describe' pays, so we should
-		# ideally git merge --no-ff $tagname here, instead!
-		if noflag squash; then
-			git_do merge --no-ff "$BRANCH" || \
-				die "There were merge conflicts."
-				# TODO: What do we do now?
-		else
-			git_do merge --squash "$BRANCH" || \
-				die "There were merge conflicts."
-				# TODO: What do we do now?
-			git_do commit
-		fi
+		git_do merge "$BRANCH" || \
+		  die "There were merge conflicts."
+		# TODO: What do we do now?
 	fi
 
 	# delete branch
@@ -299,8 +275,9 @@ cmd_finish() {
 
 	echo
 	echo "Summary of actions:"
-	echo "- Latest objects have been fetched from '$ORIGIN'"
-	echo "- Release branch has been merged into '$MASTER_BRANCH'"
+	if flag fetch; then
+		echo "- Latest objects have been fetched from '$ORIGIN'"
+	fi
 	if noflag notag; then
 		echo "- The release was tagged '$tagname'"
 	fi
