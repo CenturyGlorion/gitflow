@@ -157,7 +157,6 @@ cmd_start() {
 	BASE=${2:-$DEVELOP_BRANCH}
 	require_version_arg
 	require_base_is_on_develop
-	require_no_existing_release_branches
 
 	# sanity checks
 	require_clean_working_tree
