@@ -224,8 +224,7 @@ cmd_finish() {
 	if noflag notag; then
 		git_do checkout "$MASTER_BRANCH" || \
 		  die "Could not check out $MASTER_BRANCH."
-		git_do merge --ff-only "$BRANCH" || \
-		  die "Could not merge $BRANCH using ff-only on $MASTER_BRANCH"
+		git_do merge --ff-only "$BRANCH"
 		# try to tag the release
 		# in case a previous attempt to finish this release branch has failed,
 		# but the tag was set successful, we skip it now
