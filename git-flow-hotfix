@@ -272,14 +272,20 @@ cmd_finish() {
 		require_branches_equal "$DEVELOP_BRANCH" "$ORIGIN/$DEVELOP_BRANCH"
 	fi
 
+	# try to merge into master
+	# in case a previous attempt to finish this release branch has failed,
+	# but the merge into master was successful, we skip it now
+	if ! git_is_branch_merged_into "$BRANCH" "$MASTER_BRANCH"; then
+		git_do checkout "$MASTER_BRANCH" || \
+		  die "Could not check out $MASTER_BRANCH."
+		git_do merge --no-ff "$BRANCH" || \
+		  die "There were merge conflicts."
+		  # TODO: What do we do now?
+	fi
+
 	if noflag notag; then
-		git_do checkout "$MASTER_BRANCH" || die "Could not check out $MASTER_BRANCH."
-		git_do merge --ff-only "$BRANCH"
-
-		git_do checkout "$BRANCH"
-
-		# try to tag the hotfix
-		# in case a previous attempt to finish this hotfix branch has failed,
+		# try to tag the release
+		# in case a previous attempt to finish this release branch has failed,
 		# but the tag was set successful, we skip it now
 		local tagname=$VERSION_PREFIX$VERSION
 		if ! git_tag_exists "$tagname"; then
@@ -296,10 +302,13 @@ cmd_finish() {
 	# try to merge into develop
 	# in case a previous attempt to finish this release branch has failed,
 	# but the merge into develop was successful, we skip it now
-	git_do checkout "$DEVELOP_BRANCH" || \
-	  die "Could not check out $DEVELOP_BRANCH."
 	if ! git_is_branch_merged_into "$BRANCH" "$DEVELOP_BRANCH"; then
-		git_do merge "$BRANCH" || \
+		git_do checkout "$DEVELOP_BRANCH" || \
+		  die "Could not check out $DEVELOP_BRANCH."
+
+		# TODO: Actually, accounting for 'git describe' pays, so we should
+		# ideally git merge --no-ff $tagname here, instead!
+		git_do merge --no-ff "$BRANCH" || \
 		  die "There were merge conflicts."
 		  # TODO: What do we do now?
 	fi
@@ -322,9 +331,8 @@ cmd_finish() {
 
 	echo
 	echo "Summary of actions:"
-	if flag fetch; then
-		echo "- Latest objects have been fetched from '$ORIGIN'"
-	fi
+	echo "- Latest objects have been fetched from '$ORIGIN'"
+	echo "- Hotfix branch has been merged into '$MASTER_BRANCH'"
 	if noflag notag; then
 		echo "- The hotfix was tagged '$VERSION_PREFIX$VERSION'"
 	fi
