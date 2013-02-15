@@ -157,7 +157,6 @@ cmd_start() {
 	BASE=${2:-$DEVELOP_BRANCH}
 	require_version_arg
 	require_base_is_on_develop
-	require_no_existing_release_branches
 
 	# sanity checks
 	require_clean_working_tree
@@ -224,8 +223,7 @@ cmd_finish() {
 	if noflag notag; then
 		git_do checkout "$MASTER_BRANCH" || \
 		  die "Could not check out $MASTER_BRANCH."
-		git_do merge --ff-only "$BRANCH" || \
-		  die "Could not merge $BRANCH using ff-only on $MASTER_BRANCH"
+		git_do merge --ff-only "$BRANCH"
 		# try to tag the release
 		# in case a previous attempt to finish this release branch has failed,
 		# but the tag was set successful, we skip it now
@@ -255,7 +253,7 @@ cmd_finish() {
 	# delete branch
 	if noflag keep; then
 		if [ "$BRANCH" = "$(git_current_branch)" ]; then
-			git_do checkout "$MASTER_BRANCH"
+			git_do checkout "$DEVELOP_BRANCH"
 		fi
 		git_do branch -d "$BRANCH"
 	fi
